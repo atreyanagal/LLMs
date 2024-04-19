@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Bots</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            /* Dark background */
+            color: #fff;
+            /* Light text color */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            /* Darker background for container */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        form {
+            display: flex;
+            margin-top: auto;
+            /* Push form to the bottom */
+        }
+
+        input[type="text"],
+        select {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            border: 1px solid #444;
+            background-color: #333;
+            /* Dark input background */
+            color: #fff;
+            /* Light text color */
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #chat-container {
+            height: 300px;
+            /* Adjust as needed */
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+            background-color: #333;
+            /* Initially hide overflow */
+        }
+
+        #chat-container.unscrollable {
+            overflow-y: always;
+        }
+
+        #chat-container p {
+            margin: 5px 0;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>AI Chat Bots</h1>
+        <div id="chat-container" class="unscrollable"></div>
+        <form id="chat-form">
+            <input type="text" id="message" name="message" placeholder="Type your message...">
+            <select id="model" name="model">
+                <option value="mistralai/mistral-large">Mistral Large Model</option>
+                <option value="meta/llama3-70b">LLAMA3-70B Model</option>
+                <option value="mistralai/mixtral-8x7b-instruct-v0.1">mixtral-8x7b-instruct-v0.1 Model</option>
+                <option value="google/gemma-7b">gemma-7b Model</option>
+                <option value="meta/llama3-8b">LLAMA3-8B Model</option>
+                <option value="mistralai/mixtral-8x22b-instruct-v0.1">mixtral-8x22b-instruct-v0.1 Model</option>
+                <option value="google/gemma-2b">gemma-2b Model</option>
+                <option value="google/codegemma-7b">codegemma-7b Model</option>
+                <option value="google/recurrentgemma-2b">recurrentgemma-2b Model</option>
+                <option value="mistralai/mistral-7b-instruct-v0.2">mistral-7b-instruct-v0.2 Model</option>
+            </select>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        let selectedModel = ''; // Store the selected model globally
+
+        const modelAI = {
+            'mistralai/mistral-large': 'Mistral Large AI:',
+            'meta/llama3-70b': 'LLAMA3-70B AI:',
+            'mistralai/mixtral-8x7b-instruct-v0.1': 'mixtral-8x7b-instruct-v0.1 AI:',
+            'google/gemma-7b':'gemma-7b AI',
+            'meta/llama3-8b': 'LLAMA3-8B AI:',
+            'mistralai/mixtral-8x22b-instruct-v0.1':'mixtral-8x22b-instruct-v0.1 AI',
+            'google/gemma-2b':'gemma-2b AI',
+            'google/codegemma-7b':'codegemma-7b AI',
+            'google/recurrentgemma-2b':'recurrentgemma-2b AI',
+            'mistralai/mistral-7b-instruct-v0.2':'mistral-7b-instruct-v0.2 AI',
+        };
+
+        document.getElementById('chat-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch('/chat', {
+                method: 'POST',
+                body: formData
+            });
+            const text = await response.text();
+            const message = formData.get('message');
+            selectedModel = formData.get('model'); // Update selected model
+            typeResponse(message, text, selectedModel); // Pass selected model to typeResponse
+            this.reset();
+            document.getElementById('model').value = selectedModel;
+        });
+
+        async function typeResponse(userMessage, botMessage, selectedModel) {
+            const container = document.getElementById('chat-container');
+            container.innerHTML += `<p><strong>You:</strong> ${userMessage}</p>`;
+            container.scrollTop = container.scrollHeight;
+            await sleep(500); // Delay before typing starts
+            container.innerHTML += `<p><strong>${modelAI[selectedModel]}</strong> </p>`; // Start AI message with the selected model
+            container.scrollTop = container.scrollHeight;
+            for (let i = 0; i < botMessage.length; i++) {
+                container.lastChild.innerHTML += botMessage[i];
+                container.scrollTop = container.scrollHeight;
+                await sleep(20); // Typing speed (adjust as needed)
+            }
+            container.innerHTML += '<hr>';
+        }
+
+        const sleep = (milliseconds) => {
+            return new Promise(resolve => setTimeout(resolve, milliseconds));
+        };
+
+        // Add an event listener to the model select element to update the selected model variable
+        document.getElementById('model').addEventListener('change', function () {
+            selectedModel = this.value;
+        });
+    </script>
+
+</body>
+
+</html>
