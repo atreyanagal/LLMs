@@ -64,7 +64,7 @@ You can customize the project in the following ways:
 
 ## Credits
 
-This project was created by [Your Name]. It utilizes the following technologies:
+This project was created by Atrey. It utilizes the following technologies:
 
 - Flask: A lightweight WSGI web application framework in Python.
 - OpenAI: A leading artificial intelligence research laboratory.
@@ -76,4 +76,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-Feel free to customize this README further based on your preferences and project details. You can include more detailed instructions, troubleshooting tips, or additional features.
